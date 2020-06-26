@@ -1,0 +1,235 @@
+NODE.js
+============================================
+
+Node is JavaScript that runs on your machine. 
+
+__dirname will tell you what directory you are in 
+
+The 3 types of modules that you can have in Node:
+
+--Module you create yourself like a new file
+  const getFile = require('./Script2.js')
+
+--Built in Modules that come in Node like:
+  const c = require('fs'); (allows you to read the file system)
+  const c = require('http'); (what we will use to build a server)
+
+ -- npm packages like nodemon
+ npm install nodemon --save-dev
+
+ its how you save and use a package only when building an app, its saved under devDependencies and will not be depolyed when the app is released
+
+
+ SERVER===
+
+ const http = require('http');
+
+const server = http.createServer((request, response) => {
+	response.setHeader('Content-Type', 'text/html')
+	response.end('<h1>Hello Fucker</h1>')
+})
+
+server.listen(3000);
+
+localhost:3000
+
+
+
+here is the same server but now using JSON-
+
+
+const http = require('http');
+
+const server = http.createServer((request, response) => {
+	const user = {
+		name: 'John',
+		hobby: 'Skating'
+	}
+	response.setHeader('Content-Type', 'application/json')
+	response.end(JSON.stringify(user));
+})
+
+server.listen(3000);
+
+
+
+building an http server is kina old fashioned, so enter....
+
+EXPRESS.js
+============================================
+
+it is the most popular library to use with Node.js to build a server.
+
+Express is really good at routing.
+
+
+
+const express = require('express');
+
+const app = express();
+
+
+app.get('/', (req, res) => {
+	const user = {
+		name: 'John',
+		hobby: 'Skating'
+	}
+	res.send(user)
+});
+app.listen(3000)
+
+
+
+this is aget request using JSON in Express. 
+
+
+here is how to layer requests. it reads it one by one and does the request that is needed...
+
+const express = require('express');
+
+const app = express();
+
+app.get('/', (req, res) => {
+	res.send('getting root')
+});
+app.get('/profile', (req, res) => {
+	res.send('getting profile')
+});
+app.post('/profile', (req, res) => {
+	const user = {
+		name: 'John',
+		hobby: 'Skating'
+	}
+	res.send(user)
+});
+app.listen(3000)
+
+
+Express Middleware
+============================================
+app.use is middleware, as the request is made of the server, the request is going to trickle down through app.use() and it is going to do something to the request that we had in order to make it easier to work with as it goes down to get/post/delete etc. app.use recieves (request, response, next) if you don't call next() then it will not proceed down the chain to the next steps. There are plenty of middeware scripts that are prewritten that you can add to your server. 
+
+
+const express = require('express');
+
+const app = express();
+
+app.use((req, res, next) => {
+	console.log('<h1>Hellooo</h1>')
+	next();
+})
+
+app.get('/', (req, res) => {
+	res.send('test test')
+});
+
+
+app.listen(3000)
+
+
+npm install body-parser
+=============================================
+
+when using postmates, you will need to install body-parser to take whatever information we recieve and parse it so we can use it. req.body will not work without this. gotta put 
+
+const bodyParser = require('body-parser');
+
+at the top of your page
+
+
+Node File System Module
+=================================================
+const fs = require('fs')
+
+if you have node downloaded, you have access to this by just doing this above. fs stands for file system and it allows you to access our file system.
+
+
+const fs = require('fs')
+
+fs.readFile('', (err, data) => {
+	if (err) {
+		console.log('Error');
+	}
+	console.log(data.toString());
+})
+
+in the '' you pt the path to the file that you want read. the readFile mthhod is going to find the file at the path provided, read it, and then if there is an error will log an error, otherwise it will log the data. 
+
+toString() on the data will make it readable, and then run 
+
+node (filename) and it will return the result. 
+
+
+
+This is the Sycronous version of the same, but use read.File async in big projects:
+
+const file = fs.readFileSync('./hello.txt');
+console.log(file.toString());
+
+
+//how to append to the file
+
+fs.appendFile('./Hello.txt', ' This is so cool!', err => {
+	if (err) {
+		console.log(err)
+	}
+})
+
+
+//Write
+
+// fs.writeFile('bye.txt', 'Sad to see you go', err => {
+// 	if (err) {
+// 		console.log(err)
+// 	}
+
+
+// DELETE
+
+fs.unlink('./bye.txt', err => {
+	if (err) {
+		console.log(err)
+	}
+})
+
+
+
+Santa Challenge!
+==========================================================
+
+const fs = require('fs');
+
+fs.readFile('./santa.txt', (err, data) => {
+	console.time('Santa-Challenge');
+	if (err) {
+		console.log('Error');
+	}
+	const stringText = data.toString();
+	var x = 0;
+	var p = 0;
+	for(var i = 0; i < stringText.length; i++) {
+		x += stringText.charAt(i) === "(" ? 1 : -1;
+		p = p == 0 ? (x === -1 ? i + 1 : 0) : p;
+	}
+
+	console.log('Floor is: ', x);
+	console.log('Position in basement is ', p);
+	console.timeEnd('Santa-Challenge');
+	
+});
+
+
+
+
+bcrypt-nodejs
+======================================================
+a library that is very powerful and allows us to create a very secure log in. 
+
+it stores passwords using hashes. 
+secure passwords are always sent over https. it is encrypted.
+
+bcrypt stores the user passwords in an encrypted hash. 
+
+
+
+also add npm cors so you can connect front end to our back end server. 
